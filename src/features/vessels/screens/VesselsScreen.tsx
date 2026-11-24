@@ -144,6 +144,7 @@ export const VesselsScreen: React.FC<VesselsScreenProps> = ({
             title="Vessel & Fleet!"
             subtitle="Assigned vessel readiness & diagnostics"
             hasNotification={true}
+            onPressProfile={() => onNavigateTab?.('Profile')}
           />
 
           {/* Loading Indicator */}

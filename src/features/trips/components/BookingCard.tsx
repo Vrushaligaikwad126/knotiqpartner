@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { BookingItem } from '../../../services';
 import { BoatIcon } from '../../../components/common/Icons';
 
@@ -29,9 +29,9 @@ export const formatBookingDate = (
   try {
     const d = new Date(dateStr);
     if (isNaN(d.getTime())) return { dayOfWeek: 'Scheduled', dateFormatted: dateStr };
-    const dayOfWeek = d.toLocaleDateString('en-US', { weekday: 'Wednesday' as any });
+    const dayOfWeek = d.toLocaleDateString('en-US', { weekday: 'short' });
     const dateFormatted = d.toLocaleDateString('en-US', {
-      day: '2-digit',
+      day: 'numeric',
       month: 'short',
       year: 'numeric',
     });
@@ -59,192 +59,252 @@ export const computeDuration = (startTime?: string, endTime?: string): string =>
   return '4 hrs';
 };
 
+const getInitials = (name?: string): string => {
+  if (!name) return 'VIP';
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) {
+    return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+  }
+  return parts[0].slice(0, 2).toUpperCase();
+};
+
 export const BookingCard: React.FC<BookingCardProps> = ({
   booking,
   onPressCard,
   onPressAction,
 }) => {
-  const status = booking.bookingStatus || 'Pending';
-  const isPending = status.toLowerCase() === 'pending';
-  const isAccepted = status.toLowerCase() === 'accepted';
-  const isCompleted = status.toLowerCase() === 'completed';
-  const isCancelled = status.toLowerCase() === 'cancelled';
+  const status = (booking.bookingStatus || 'Pending').toLowerCase();
+  const isPending = status === 'pending';
+  const isAccepted = status === 'accepted';
+  const isCompleted = status === 'completed';
 
-  // Badge appearance by status
+  // Status Badge Configuration
   const badgeConfig = isPending
     ? {
         bg: 'bg-amber-50',
-        border: 'border-amber-200',
+        border: 'border-amber-300',
         text: 'text-amber-800',
         dot: 'bg-amber-500',
         label: 'Pending Approval',
       }
     : isAccepted
     ? {
-        bg: 'bg-[#E0F5F8]',
-        border: 'border-cyan-200',
+        bg: 'bg-cyan-50',
+        border: 'border-cyan-300',
         text: 'text-[#0E6C7C]',
         dot: 'bg-[#1592A6]',
         label: 'Confirmed',
       }
     : isCompleted
     ? {
-        bg: 'bg-[#E6F8F2]',
-        border: 'border-emerald-200',
-        text: 'text-[#0D7A5C]',
-        dot: 'bg-[#10B981]',
+        bg: 'bg-emerald-50',
+        border: 'border-emerald-300',
+        text: 'text-emerald-800',
+        dot: 'bg-emerald-500',
         label: 'Completed',
       }
     : {
         bg: 'bg-rose-50',
-        border: 'border-rose-200',
-        text: 'text-rose-700',
+        border: 'border-rose-300',
+        text: 'text-rose-800',
         dot: 'bg-rose-500',
         label: 'Cancelled',
       };
 
   const startTimeFormatted = formatTime12h(booking.startTime) || '10:30 AM';
   const endTimeFormatted = formatTime12h(booking.endTime) || '02:30 PM';
-  const timeRange = `${startTimeFormatted} — ${endTimeFormatted}`;
   const duration = computeDuration(booking.startTime, booking.endTime);
   const { dayOfWeek, dateFormatted } = formatBookingDate(booking.bookingDate);
 
-  const guestName = booking.user?.name?.trim() || 'Guest';
+  const guestName = booking.user?.name?.trim() || 'VIP Guest';
   const guestCount = booking.guests || booking.totalGuests || 1;
+  const guestInitials = getInitials(guestName);
+  const profilePicture = booking.user?.profilePicture;
+
   const vesselName = booking.yacht?.name || '100’ NEDSHIP';
   const vesselSequence = booking.yacht?.sequenceId || 'KNY-0045';
+  const vesselType = booking.yacht?.yachtType || 'Motor Superyacht';
   const totalAmount = booking.totalAmount || booking.finalAmount || '1200';
+  const bookingIdDisplay = booking.bookingId || `#${booking.id || 'BOOKING'}`;
 
   const buttonLabel = isPending
-    ? 'Review & Manage Booking'
+    ? 'Review Charter Request'
     : isAccepted
-    ? 'View Trip & Preparation'
+    ? 'Manage Manifest & Boarding'
     : isCompleted
     ? 'View Charter Summary'
     : 'View Booking Details';
 
   return (
     <TouchableOpacity
-      activeOpacity={0.95}
+      activeOpacity={0.92}
       onPress={onPressCard}
       style={{
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.05,
-        shadowRadius: 8,
-        elevation: 2,
+        shadowColor: '#072432',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.08,
+        shadowRadius: 14,
+        elevation: 3,
       }}
-      className="bg-white rounded-3xl p-5 mb-4 border border-slate-100"
+      className="bg-white rounded-[26px] p-5 mb-5 border border-slate-200/80 overflow-hidden"
     >
-      {/* Top Bar: Booking ID & Status Badge */}
-      <View className="flex-row items-center justify-between mb-3">
-        <View className="bg-slate-50 border border-slate-200/80 rounded-md px-2.5 py-1">
-          <Text className="text-[10px] font-extrabold text-slate-600 tracking-wider">
-            {booking.bookingId || `#${booking.id || 'BOOKING'}`}
-          </Text>
+      {/* Top Header: Vessel Identity & Status Badge */}
+      <View className="flex-row items-center justify-between mb-3.5 pb-3 border-b border-slate-100">
+        <View className="flex-row items-center flex-1 pr-2">
+          <View className="w-10 h-10 rounded-2xl bg-[#E8F5F7] items-center justify-center border border-[#CFE8EE] mr-3">
+            <BoatIcon size={20} color="#0E6C7C" />
+          </View>
+          <View className="flex-1">
+            <View className="flex-row items-center">
+              <Text className="text-base font-black text-slate-900 mr-2" numberOfLines={1}>
+                {vesselName}
+              </Text>
+            </View>
+            <Text className="text-[11px] font-bold text-slate-400 mt-0.5">
+              {vesselSequence} • {vesselType}
+            </Text>
+          </View>
         </View>
 
+        {/* Status Pill */}
         <View
-          className={`flex-row items-center ${badgeConfig.bg} border ${badgeConfig.border} rounded-full px-2.5 py-1`}
+          className={`flex-row items-center ${badgeConfig.bg} border ${badgeConfig.border} rounded-full px-3 py-1.5`}
         >
           <View className={`w-2 h-2 rounded-full ${badgeConfig.dot} mr-1.5`} />
-          <Text className={`text-[11px] font-extrabold ${badgeConfig.text}`}>
+          <Text className={`text-[11px] font-black ${badgeConfig.text}`}>
             {badgeConfig.label}
           </Text>
         </View>
       </View>
 
-      {/* Date & Time Highlights */}
-      <View className="flex-row items-baseline justify-between mb-2">
-        <View>
-          <Text className="text-[10px] font-bold text-slate-400 tracking-wider uppercase">
-            Start Time
-          </Text>
-          <Text className="text-2xl font-black text-slate-900 mt-0.5">
-            {startTimeFormatted}
-          </Text>
-        </View>
-
-        <View className="items-end">
-          <Text className="text-[11px] font-bold text-slate-500">{dayOfWeek}</Text>
-          <Text className="text-xs font-black text-slate-900 mt-0.5">
-            {dateFormatted}
-          </Text>
-        </View>
-      </View>
-
-      {/* Time Range Pill */}
-      <View className="bg-cyan-50/70 border border-cyan-100 rounded-full px-3 py-1 self-start mb-3">
-        <Text className="text-[#1592A6] text-xs font-bold">
-          🕒 {timeRange} ({duration})
-        </Text>
-      </View>
-
-      {/* Vessel & Guest Info */}
-      <View className="bg-slate-50/80 rounded-2xl p-3 mb-3 border border-slate-100">
-        <View className="flex-row items-center justify-between mb-1.5">
-          <View className="flex-row items-center flex-1 pr-2">
-            <BoatIcon size={16} color="#1592A6" />
-            <Text className="text-sm font-extrabold text-slate-900 ml-1.5" numberOfLines={1}>
-              {vesselName}
+      {/* Itinerary / Flight-Style Boarding Pass Strip */}
+      <View className="bg-[#F8FAFC] rounded-2xl p-3.5 mb-3.5 border border-slate-200/70">
+        {/* Date Row */}
+        <View className="flex-row items-center justify-between mb-3 pb-2 border-b border-slate-200/50">
+          <View className="flex-row items-center">
+            <Text className="text-xs mr-1.5">📅</Text>
+            <Text className="text-xs font-black text-slate-800">
+              {dayOfWeek ? `${dayOfWeek}, ` : ''}{dateFormatted}
             </Text>
           </View>
-          <Text className="text-[11px] font-bold text-slate-500">
-            {vesselSequence}
-          </Text>
+          <View className="bg-white px-2.5 py-0.5 rounded-full border border-slate-200/80">
+            <Text className="text-[10px] font-extrabold text-slate-500 tracking-wider">
+              {bookingIdDisplay}
+            </Text>
+          </View>
         </View>
 
-        <View className="flex-row items-center justify-between pt-1 border-t border-slate-200/50">
-          <Text className="text-xs text-slate-600 font-semibold">
-            👤 Primary Guest: <Text className="font-extrabold text-slate-900">{guestName}</Text>
-          </Text>
-          <Text className="text-xs font-bold text-slate-700">
+        {/* Departure & Return Timeline */}
+        <View className="flex-row items-center justify-between">
+          {/* Departure */}
+          <View className="flex-1">
+            <Text className="text-[9px] font-extrabold text-slate-400 tracking-widest uppercase">
+              DEPARTURE
+            </Text>
+            <Text className="text-xl font-black text-slate-900 mt-0.5">
+              {startTimeFormatted}
+            </Text>
+          </View>
+
+          {/* Nautical Cruise Connector */}
+          <View className="items-center px-2 flex-1">
+            <Text className="text-[10px] font-black text-[#0E6C7C] bg-[#E8F5F7] px-2.5 py-0.5 rounded-full border border-[#D0E9EE]">
+              ⚓ {duration}
+            </Text>
+            <View className="w-full flex-row items-center justify-center mt-1">
+              <View className="h-[1.5px] bg-[#CFE8EE] flex-1" />
+              <Text className="text-[10px] text-[#0E6C7C] mx-1">▶</Text>
+              <View className="h-[1.5px] bg-[#CFE8EE] flex-1" />
+            </View>
+          </View>
+
+          {/* Return */}
+          <View className="flex-1 items-end">
+            <Text className="text-[9px] font-extrabold text-slate-400 tracking-widest uppercase">
+              RETURN
+            </Text>
+            <Text className="text-xl font-black text-slate-900 mt-0.5">
+              {endTimeFormatted}
+            </Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Guest Manifest Row */}
+      <View className="flex-row items-center justify-between bg-slate-50/70 rounded-2xl p-3 mb-3.5 border border-slate-100">
+        <View className="flex-row items-center flex-1 pr-2">
+          {profilePicture ? (
+            <Image
+              source={{ uri: profilePicture }}
+              className="w-10 h-10 rounded-full border border-slate-200 mr-2.5"
+            />
+          ) : (
+            <View className="w-10 h-10 rounded-full bg-[#E0F5F8] items-center justify-center border border-[#BCE7ED] mr-2.5">
+              <Text className="text-xs font-black text-[#0E6C7C]">
+                {guestInitials}
+              </Text>
+            </View>
+          )}
+
+          <View className="flex-1">
+            <Text className="text-xs font-black text-slate-900" numberOfLines={1}>
+              {guestName}
+            </Text>
+            <Text className="text-[10px] font-bold text-slate-400 mt-0.5">
+              {booking.user?.mobileNo ? `📞 ${booking.user.mobileNo}` : 'VIP Primary Charterer'}
+            </Text>
+          </View>
+        </View>
+
+        <View className="bg-white px-3 py-1.5 rounded-xl border border-slate-200/80 shadow-sm">
+          <Text className="text-[11px] font-black text-slate-700">
             👥 {guestCount} {guestCount === 1 ? 'Guest' : 'Guests'}
           </Text>
         </View>
-
-        {booking.user?.mobileNo ? (
-          <Text className="text-[11px] text-slate-400 font-medium mt-1">
-            📞 {booking.user.mobileNo}
-          </Text>
-        ) : null}
       </View>
 
-      {/* Price Snapshot */}
-      <View className="flex-row items-center justify-between mb-3 px-1">
-        <Text className="text-xs text-slate-500 font-semibold">
-          Total Charter Fare:
-        </Text>
-        <Text className="text-sm font-black text-slate-900">
+      {/* Financial Overview */}
+      <View className="flex-row items-center justify-between mb-4 px-1">
+        <View>
+          <Text className="text-[9px] font-extrabold text-slate-400 tracking-widest uppercase">
+            TOTAL CHARTER FARE
+          </Text>
+          <Text className="text-[11px] font-bold text-slate-500 mt-0.5">
+            {booking.paymentStatus ? `Status: ${booking.paymentStatus}` : 'Charter Value'}
+          </Text>
+        </View>
+
+        <Text className="text-xl font-black text-[#0E6C7C]">
           ${Math.round(Number(totalAmount)).toLocaleString()}
         </Text>
       </View>
 
-      {/* CTA Button */}
+      {/* Premium CTA Button */}
       <TouchableOpacity
-        activeOpacity={0.8}
+        activeOpacity={0.85}
         onPress={onPressAction || onPressCard}
-        className={`w-full py-3 rounded-2xl items-center justify-center border ${
+        style={{
+          shadowColor: isAccepted ? '#0E6C7C' : isPending ? '#D97706' : '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: isAccepted || isPending ? 0.2 : 0.05,
+          shadowRadius: 5,
+          elevation: 2,
+        }}
+        className={`w-full py-3.5 rounded-2xl items-center justify-center flex-row ${
           isPending
-            ? 'bg-amber-100/70 border-amber-300 active:bg-amber-200'
+            ? 'bg-[#D97706] active:bg-[#B45309]'
             : isAccepted
-            ? 'bg-[#E0F5F8] border-cyan-200 active:bg-cyan-100'
-            : 'bg-slate-100 border-slate-200 active:bg-slate-200'
+            ? 'bg-[#0E6C7C] active:bg-[#084854]'
+            : 'bg-slate-900 active:bg-slate-800'
         }`}
       >
-        <Text
-          className={`font-black text-xs tracking-wider uppercase ${
-            isPending
-              ? 'text-amber-900'
-              : isAccepted
-              ? 'text-[#0E6C7C]'
-              : 'text-slate-800'
-          }`}
-        >
-          {buttonLabel} →
+        <Text className="font-black text-xs tracking-wider uppercase text-white mr-1.5">
+          {buttonLabel}
         </Text>
+        <Text className="text-white font-black text-sm">→</Text>
       </TouchableOpacity>
     </TouchableOpacity>
   );
 };
 
+export default BookingCard;

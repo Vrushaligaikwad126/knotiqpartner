@@ -4,5 +4,7 @@ export * from './api/bookingService';
 export * from './api/crewService';
 export * from './api/yachtService';
 export * from './api/weatherService';
+export * from './api/chatService';
+export * from './chat/chatSocketService';
 export * from './location/locationService';
 export * from './storage/storageService';

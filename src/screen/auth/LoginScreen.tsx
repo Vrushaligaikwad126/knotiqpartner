@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { loginService, LoginResponse } from '../../services';
+import { toast } from '../../components/common/Toast';
 
 export interface LoginScreenProps {
   onLoginSuccess?: (response: LoginResponse) => void;
@@ -51,7 +52,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
       // Successful login
       onLoginSuccess?.(response);
     } catch (err: any) {
-      setErrorMessage(err.message || 'Login failed. Please check your credentials.');
+      const msg = err.message || 'Login failed. Please check your credentials.';
+      setErrorMessage(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -77,7 +80,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           {/* Top Brand Header */}
           <View className="items-center mb-6">
             {/* Nautical Helm Badge */}
-            <View className="w-18 h-18 rounded-3xl bg-[#E0F5F8] items-center justify-center mb-3 border border-cyan-100 shadow-xs">
+            <View className="w-16 h-16 rounded-3xl bg-[#E0F5F8] items-center justify-center mb-3 border border-cyan-100 shadow-xs">
               <Text className="text-3xl">⚓</Text>
             </View>
 

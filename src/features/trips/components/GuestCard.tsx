@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 
 export interface GuestItem {
   id: string;
@@ -9,6 +9,7 @@ export interface GuestItem {
   occasion: string;
   isPrimary: boolean;
   status: 'Arrived' | 'Not arrived';
+  profilePicture?: string | null;
 }
 
 export interface GuestCardProps {
@@ -41,10 +42,18 @@ export const GuestCard: React.FC<GuestCardProps> = ({
     >
       {/* Left Avatar & Information */}
       <View className="flex-row items-center flex-1 pr-2">
-        {/* Avatar Initials Circle */}
-        <View className="w-11 h-11 rounded-full bg-cyan-50 items-center justify-center mr-3 border border-cyan-100">
-          <Text className="text-cyan-800 text-xs font-bold">{guest.initials}</Text>
-        </View>
+        {/* Avatar: Image or Initials Circle */}
+        {guest.profilePicture ? (
+          <Image
+            source={{ uri: guest.profilePicture }}
+            className="w-11 h-11 rounded-full mr-3 border border-cyan-100"
+            resizeMode="cover"
+          />
+        ) : (
+          <View className="w-11 h-11 rounded-full bg-cyan-50 items-center justify-center mr-3 border border-cyan-100">
+            <Text className="text-cyan-800 text-xs font-bold">{guest.initials}</Text>
+          </View>
+        )}
 
         {/* Guest Details */}
         <View className="flex-1">
@@ -99,7 +108,7 @@ export const GuestCard: React.FC<GuestCardProps> = ({
       {/* Right Action Buttons */}
       <View className="flex-row items-center">
         {/* Phone Button */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => onCall?.(guest)}
           style={{
@@ -112,7 +121,7 @@ export const GuestCard: React.FC<GuestCardProps> = ({
           className="w-9 h-9 rounded-2xl bg-white border border-slate-200 items-center justify-center mr-2"
         >
           <Text className="text-sm">📞</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         {/* Message Button */}
         <TouchableOpacity

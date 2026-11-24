@@ -150,7 +150,7 @@ export const TripDetailsScreen: React.FC<TripDetailsScreenProps> = ({
           {/* Dual Action Buttons (Call Guest / Message) */}
           <View className="flex-row items-center justify-between space-x-3 mb-3">
             {/* Call Guest Button */}
-            <TouchableOpacity
+            {/* <TouchableOpacity
               activeOpacity={0.8}
               onPress={onCallGuest}
               style={{
@@ -166,7 +166,7 @@ export const TripDetailsScreen: React.FC<TripDetailsScreenProps> = ({
               <Text className="text-xs font-bold text-slate-800">
                 Call Guest
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             {/* Message Button */}
             <TouchableOpacity

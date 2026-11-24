@@ -436,9 +436,9 @@ export const MoreScreen: React.FC<MoreScreenProps> = ({
           </TouchableOpacity>
         </ScrollView>
 
-        {/* Floating Bottom Tab Bar with More Active */}
+        {/* Floating Bottom Tab Bar with Profile Active */}
         <BottomTabBar
-          activeTab="More"
+          activeTab="Profile"
           onTabPress={(tab) => onNavigateTab?.(tab)}
         />
       </View>

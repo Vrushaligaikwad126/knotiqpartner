@@ -1,6 +1,10 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { BoatIcon, FuelIcon, EngineIcon } from '../../../components/common/Icons';
+import {
+  BoatIcon,
+  FuelIcon,
+  EngineIcon,
+} from '../../../components/common/Icons';
 
 export interface VesselCardProps {
   name?: string;
@@ -59,8 +63,12 @@ export const VesselCard: React.FC<VesselCardProps> = ({
               <BoatIcon size={20} color="#1592A6" />
             </View>
             <View>
-              <Text className="text-base font-extrabold text-slate-900">{name}</Text>
-              <Text className="text-xs font-medium text-slate-400 mt-0.5">{model}</Text>
+              <Text className="text-base font-extrabold text-slate-900">
+                {name}
+              </Text>
+              <Text className="text-xs font-medium text-slate-400 mt-0.5">
+                {model}
+              </Text>
             </View>
           </View>
 
@@ -70,9 +78,8 @@ export const VesselCard: React.FC<VesselCardProps> = ({
           </View>
         </TouchableOpacity>
 
-        {/* 2 Metric Boxes (Fuel & Engine) */}
-        <View className="flex-row items-center justify-between space-x-2 mb-2.5">
-          {/* Fuel Box */}
+        {/* 2 Metric Boxes (& Engine) */}
+        {/* <View className="flex-row items-center justify-between space-x-2 mb-2.5">
           <View className="flex-1 bg-slate-50 rounded-2xl py-2 px-3 flex-row items-center mr-2 border border-slate-100">
             <View className="w-8 h-8 rounded-full bg-white items-center justify-center mr-2 border border-slate-100 shadow-xs">
               <FuelIcon size={14} color="#1592A6" />
@@ -93,7 +100,6 @@ export const VesselCard: React.FC<VesselCardProps> = ({
             </View>
           </View>
 
-          {/* Engine Hours Box */}
           <View className="flex-1 bg-slate-50 rounded-2xl py-2 px-3 flex-row items-center border border-slate-100">
             <View className="w-8 h-8 rounded-full bg-white items-center justify-center mr-2 border border-slate-100 shadow-xs">
               <EngineIcon size={14} color="#1592A6" />
@@ -113,7 +119,7 @@ export const VesselCard: React.FC<VesselCardProps> = ({
               </Text>
             </View>
           </View>
-        </View>
+        </View> */}
 
         {/* Maintenance Status Link */}
         <TouchableOpacity
@@ -124,7 +130,9 @@ export const VesselCard: React.FC<VesselCardProps> = ({
           <Text className="text-xs font-medium text-slate-500">
             {maintenanceMessage}
           </Text>
-          <Text className="text-slate-400 font-bold text-base leading-4">›</Text>
+          <Text className="text-slate-400 font-bold text-base leading-4">
+            ›
+          </Text>
         </TouchableOpacity>
       </View>
     </View>

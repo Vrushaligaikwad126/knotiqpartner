@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-export type TabKey = 'Home' | 'Trips' | 'Vessel' | 'More';
+export type TabKey = 'Home' | 'Trips' | 'Vessel' | 'More' | 'Profile';
 
 interface BottomTabBarProps {
   activeTab?: TabKey;
@@ -95,6 +95,34 @@ const VesselIcon: React.FC<{ color: string; size?: number }> = ({ color, size = 
   );
 };
 
+const ProfileIcon: React.FC<{ color: string; size?: number }> = ({ color, size = 16 }) => {
+  return (
+    <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
+      <View
+        style={{
+          width: size * 0.44,
+          height: size * 0.44,
+          borderRadius: (size * 0.44) / 2,
+          borderWidth: 1.5,
+          borderColor: color,
+          marginBottom: 1,
+        }}
+      />
+      <View
+        style={{
+          width: size * 0.88,
+          height: size * 0.36,
+          borderTopLeftRadius: size * 0.44,
+          borderTopRightRadius: size * 0.44,
+          borderWidth: 1.5,
+          borderBottomWidth: 0,
+          borderColor: color,
+        }}
+      />
+    </View>
+  );
+};
+
 const MoreIcon: React.FC<{ color: string; size?: number }> = ({ color, size = 16 }) => {
   return (
     <View style={{ width: size, height: size, justifyContent: 'center' }}>
@@ -128,7 +156,7 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
     { key: 'Home', label: 'Home', renderIcon: (c) => <HomeIcon color={c} size={15} /> },
     { key: 'Trips', label: 'Trips', renderIcon: (c) => <TripsIcon color={c} size={15} /> },
     { key: 'Vessel', label: 'Vessel', renderIcon: (c) => <VesselIcon color={c} size={15} /> },
-    { key: 'More', label: 'More', renderIcon: (c) => <MoreIcon color={c} size={15} /> },
+    { key: 'Profile', label: 'Profile', renderIcon: (c) => <ProfileIcon color={c} size={15} /> },
   ];
 
   return (
@@ -152,7 +180,10 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
       }}
     >
       {tabs.map((tab) => {
-        const isActive = activeTab === tab.key;
+        const isActive =
+          activeTab === tab.key ||
+          (tab.key === 'Profile' && activeTab === 'More') ||
+          (tab.key === 'More' && activeTab === 'Profile');
         const iconColor = isActive ? '#FFFFFF' : '#334155';
         const textColor = isActive ? '#FFFFFF' : '#334155';
 

@@ -15,6 +15,7 @@ import {
   BoardingStatus,
   BookingItem,
 } from '../../../services';
+import { toast } from '../../../components/common/Toast';
 
 export interface GuestProfileScreenProps {
   bookingId?: string | number;
@@ -96,18 +97,12 @@ export const GuestProfileScreen: React.FC<GuestProfileScreenProps> = ({
         setBoardedAt(null);
       }
 
-      Alert.alert(
-        'Status Updated',
-        `Guest marked as "${targetBoardingStatus}" with booking status "Accepted".`
-      );
+      toast.success(`Guest marked as ${targetBoardingStatus}`);
 
       onToggleArrived?.();
     } catch (err: any) {
       console.log('Error calling updateBookingStatus:', err);
-      Alert.alert(
-        'Update Failed',
-        err.message || 'Could not update booking status on server.'
-      );
+      toast.error(err.message || 'Could not update status');
     } finally {
       setIsUpdating(false);
     }

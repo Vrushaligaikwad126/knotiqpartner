@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, Platform } from 'react-native';
+import { View, Text, Image, Platform, TouchableOpacity } from 'react-native';
 import { Images } from '../../../assets';
 import {
   WindIcon,
@@ -22,6 +22,7 @@ export interface TripConditionsProps {
   rainRiskLevel?: string;
   lastUpdated?: string;
   locationName?: string;
+  onPressLocation?: () => void;
   isLoading?: boolean;
 }
 
@@ -38,6 +39,7 @@ export const TripConditionsCard: React.FC<TripConditionsProps> = ({
   rainRiskLevel = 'Low Risk',
   lastUpdated = '5m ago',
   locationName,
+  onPressLocation,
   isLoading = false,
 }) => {
   const monoFont = Platform.OS === 'ios' ? 'Courier' : 'monospace';
@@ -197,17 +199,37 @@ export const TripConditionsCard: React.FC<TripConditionsProps> = ({
               °F
             </Text>
           </View>
-          <Text
-            style={{
-              fontSize: 13,
-              fontWeight: '600',
-              color: '#139BAE',
-              marginTop: 4,
-            }}
-          >
-            Feels like {feelsLike}° • {condition}
-            {locationName ? ` • 📍 ${locationName}` : ''}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', marginTop: 4 }}>
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: '600',
+                color: '#139BAE',
+              }}
+            >
+              Feels like {feelsLike}° • {condition}
+            </Text>
+            {locationName && (
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={onPressLocation}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  backgroundColor: 'rgba(19, 155, 174, 0.12)',
+                  paddingHorizontal: 8,
+                  paddingVertical: 2,
+                  borderRadius: 12,
+                  marginLeft: 6,
+                }}
+              >
+                <Text style={{ fontSize: 11, fontWeight: '700', color: '#0E6C7C' }}>
+                  📍 {locationName}
+                </Text>
+                <Text style={{ fontSize: 10, color: '#0E6C7C', marginLeft: 3 }}>▾</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
         {/* Authentic 3D Sun & Cloud Graphic */}

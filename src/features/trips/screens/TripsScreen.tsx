@@ -132,6 +132,7 @@ export const TripsScreen: React.FC<TripsScreenProps> = ({
             title="Charters & Trips!"
             subtitle="Live schedule & booking management"
             hasNotification={true}
+            onPressProfile={() => handleTabChange('Profile')}
           />
 
           {/* Booking Status Tabs: Pending / Accepted / Completed / Cancelled */}
@@ -146,7 +147,7 @@ export const TripsScreen: React.FC<TripsScreenProps> = ({
             <View className="py-12 items-center justify-center">
               <ActivityIndicator color="#1592A6" size="large" />
               <Text className="text-xs text-slate-500 font-semibold mt-3">
-                Loading {selectedStatus} bookings...
+                Loading {selectedStatus === 'Accepted' ? 'Confirmed' : selectedStatus} bookings...
               </Text>
             </View>
           )}
@@ -177,7 +178,7 @@ export const TripsScreen: React.FC<TripsScreenProps> = ({
             <View>
               <View className="flex-row items-center justify-between mb-2.5 px-0.5">
                 <Text className="text-[10px] font-black tracking-widest text-slate-400 uppercase">
-                  {selectedStatus} Bookings ({liveBookings.length})
+                  {selectedStatus === 'Accepted' ? 'Confirmed' : selectedStatus} Bookings ({liveBookings.length})
                 </Text>
                 <Text className="text-[10px] font-semibold text-cyan-700">
                   Pull down to refresh
@@ -217,13 +218,13 @@ export const TripsScreen: React.FC<TripsScreenProps> = ({
                 </Text>
               </View>
               <Text className="text-base font-extrabold text-slate-900 text-center">
-                No {selectedStatus} Bookings
+                No {selectedStatus === 'Accepted' ? 'Confirmed' : selectedStatus} Bookings
               </Text>
               <Text className="text-xs text-slate-500 text-center mt-1 px-4 leading-4">
                 {selectedStatus === 'Pending'
                   ? 'There are currently no new charter requests waiting for approval.'
                   : selectedStatus === 'Accepted'
-                  ? 'There are no active or accepted bookings scheduled for this yacht.'
+                  ? 'There are no active or confirmed bookings scheduled for this yacht.'
                   : selectedStatus === 'Completed'
                   ? 'No completed charters recorded yet.'
                   : 'No cancelled bookings.'}

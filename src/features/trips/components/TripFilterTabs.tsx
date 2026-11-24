@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 
 export type BookingFilterStatus = 'Pending' | 'Accepted' | 'Completed' | 'Cancelled';
 
@@ -9,63 +9,81 @@ export interface TripFilterTabsProps {
   counts?: Partial<Record<BookingFilterStatus, number>>;
 }
 
+const TABS: { status: BookingFilterStatus; label: string }[] = [
+  { status: 'Pending', label: 'Pending' },
+  { status: 'Accepted', label: 'Confirmed' },
+  { status: 'Completed', label: 'Completed' },
+  { status: 'Cancelled', label: 'Cancelled' },
+];
+
 export const TripFilterTabs: React.FC<TripFilterTabsProps> = ({
   selectedTab,
   onSelectTab,
   counts,
 }) => {
-  const tabs: BookingFilterStatus[] = ['Pending', 'Accepted', 'Completed', 'Cancelled'];
-
   return (
-    <View className="bg-[#EAF5F7] rounded-full p-1 flex-row items-center mb-4 border border-[#DCEDF2]">
-      {tabs.map((tab) => {
-        const isActive = selectedTab === tab;
-        const count = counts?.[tab];
+    <View className="mb-4">
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingVertical: 2,
+          paddingHorizontal: 2,
+        }}
+      >
+        <View className="bg-[#EAF3F6] p-1.5 rounded-full flex-row items-center border border-[#D5E6ED]">
+          {TABS.map(({ status, label }) => {
+            const isActive = selectedTab === status;
+            const count = counts?.[status];
+            const hasCount = typeof count === 'number';
 
-        return (
-          <TouchableOpacity
-            key={tab}
-            activeOpacity={0.8}
-            onPress={() => onSelectTab(tab)}
-            style={{
-              backgroundColor: isActive ? '#FFFFFF' : 'transparent',
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: isActive ? 0.08 : 0,
-              shadowRadius: 3,
-              elevation: isActive ? 2 : 0,
-            }}
-            className="flex-1 py-2 rounded-full items-center justify-center flex-row"
-          >
-            <Text
-              numberOfLines={1}
-              className={`text-[11.5px] ${
-                isActive
-                  ? 'font-extrabold text-slate-900'
-                  : 'font-semibold text-slate-500'
-              }`}
-            >
-              {tab}
-            </Text>
-
-            {typeof count === 'number' && count > 0 && (
-              <View
-                className={`ml-1 px-1.5 py-0.2 rounded-full ${
-                  isActive ? 'bg-[#EAF5F7]' : 'bg-slate-200/60'
-                }`}
+            return (
+              <TouchableOpacity
+                key={status}
+                activeOpacity={0.85}
+                onPress={() => onSelectTab(status)}
+                style={{
+                  backgroundColor: isActive ? '#0E6C7C' : 'transparent',
+                  shadowColor: '#0E6C7C',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: isActive ? 0.25 : 0,
+                  shadowRadius: 4,
+                  elevation: isActive ? 3 : 0,
+                }}
+                className={`flex-row items-center justify-center px-4 py-2 rounded-full mx-0.5`}
               >
                 <Text
-                  className={`text-[9.5px] font-extrabold ${
-                    isActive ? 'text-[#1592A6]' : 'text-slate-500'
+                  className={`text-xs ${
+                    isActive
+                      ? 'font-black text-white'
+                      : 'font-bold text-slate-600'
                   }`}
                 >
-                  {count}
+                  {label}
                 </Text>
-              </View>
-            )}
-          </TouchableOpacity>
-        );
-      })}
+
+                {hasCount && count > 0 && (
+                  <View
+                    className={`ml-1.5 px-2 py-0.5 rounded-full ${
+                      isActive ? 'bg-white/20' : 'bg-slate-300/60'
+                    }`}
+                  >
+                    <Text
+                      className={`text-[10px] font-black ${
+                        isActive ? 'text-white' : 'text-slate-700'
+                      }`}
+                    >
+                      {count}
+                    </Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </ScrollView>
     </View>
   );
 };
